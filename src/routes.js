@@ -6,6 +6,7 @@ const UserController = require('./controllers/UserController');
 const EventController = require('./controllers/EventController');
 const DashboardController = require('./controllers/DashboardController');
 const LoginController = require('./controllers/LoginController');
+const RegistrationController = require('./controllers/RegistrationController');
 
 const routes = express.Router();
 const upload = multer(uploadConfig);
@@ -13,6 +14,9 @@ const upload = multer(uploadConfig);
 routes.get('/status', (req, res) => { 
     res.send({ status: 200 });
 })
+
+//Registration
+routes.post('/registration/:eventId', RegistrationController.create)
 
 //Login
 routes.post('/login', LoginController.store)
