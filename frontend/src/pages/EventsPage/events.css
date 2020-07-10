@@ -22,3 +22,7 @@ label#thumbnail.has-thumbnail  {
 label#thumbnail.has-thumbnail img {
     display: none;
 }
+
+.event-validation {
+    margin-top: 12px;
+}
