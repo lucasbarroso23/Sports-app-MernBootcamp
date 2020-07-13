@@ -18,7 +18,6 @@ export default function EventsPage() {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
     }, [thumbnail])
 
-    console.log(title, description, price, sport)
 
     const submitHandler = async (evt) => {
 
