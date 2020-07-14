@@ -92,3 +92,10 @@ button {
     background: #286090;
     opacity: 1;
 }
+
+.content div.input-group{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    
+}
