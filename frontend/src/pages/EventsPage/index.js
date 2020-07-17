@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import api from '../../services/api';
-import { Button, Form, FormGroup, Input, Container, Label, Alert } from 'reactstrap';
+import { Button, Form, FormGroup, Input, Container, Label, Alert, ButtonDropdown, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import CameraIcon from '../../assets/camera.png'
 import "./events.css";
 
@@ -11,9 +11,12 @@ export default function EventsPage({ history }) {
     const [price, setPrice] = useState("");
     const [thumbnail, setThumbnail] = useState(null);
     const [date, setDate] = useState("");
-    const [sport, setSport] = useState("");
-    const [error, setError ] = useState(false);
-    const [success, setSuccess ] = useState(false);
+    const [sport, setSport] = useState("Sport");
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [dropdownOpen, setOpen] = useState(false);
+
+    const toggle = () => setOpen(!dropdownOpen);
 
     const preview = useMemo(() => {
         return thumbnail ? URL.createObjectURL(thumbnail) : null;
@@ -38,7 +41,7 @@ export default function EventsPage({ history }) {
 
             if (title !== "" &&
                 description !== "" &&
-                sport !== "" &&
+                sport !== "Sport" &&
                 date !== "" &&
                 price !== "" &&
                 thumbnail !== null
@@ -48,7 +51,7 @@ export default function EventsPage({ history }) {
                 setTimeout(() => {
                     setSuccess(false)
                 }, 2000)
-            }else {
+            } else {
                 setError(true)
                 setTimeout(() => {
                     setError(false)
@@ -64,43 +67,52 @@ export default function EventsPage({ history }) {
         return ""
     }
 
+    const sportEventHandler = (sport) => setSport(sport);
+
+    console.log(sport)
     return (
         <Container>
             <h2>Create your event</h2>
             <Form onSubmit={submitHandler}>
                 <div className="input-group">
-                <FormGroup>
-                    <Label>Upload Image: </Label>
-                    <label id="thumbnail" style={{ backgroundImage: `url(${preview})` }} className={thumbnail ? 'has-thumbnail' : ''}>
-                        <Input type="file" onChange={(evt) => setThumbnail(evt.target.files[0])} />
-                        <img src={CameraIcon} style={{ maxWidth: "50px " }} alt="upload icon image" />
-                    </label>
-                </FormGroup>
-                <FormGroup>
-                    <Label>Sport: </Label>
-                    <Input id="sport" type="text" value={sport} placeholder={'Sport name'}
-                        onChange={(evt) => setSport(evt.target.value)} />
-                </FormGroup>
-                <FormGroup>
-                    <Label>Title: </Label>
-                    <Input id="title" type="text" value={title} placeholder={'Event title'}
-                        onChange={(evt) => setTitle(evt.target.value)} />
-                </FormGroup>
-                <FormGroup>
-                    <Label>Event Description: </Label>
-                    <Input id="description" type="text" value={description} placeholder={'Event description'}
-                        onChange={(evt) => setDescription(evt.target.value)} />
-                </FormGroup>
-                <FormGroup>
-                    <Label>Event price: </Label>
-                    <Input id="price" type="text" value={price} placeholder={'Event price R$00.00'}
-                        onChange={(evt) => setPrice(evt.target.value)} />
-                </FormGroup>
-                <FormGroup>
-                    <Label>Event date: </Label>
-                    <Input id="date" type="date" value={date}
-                        onChange={(evt) => setDate(evt.target.value)} />
-                </FormGroup>
+                    <FormGroup>
+                        <Label>Upload Image: </Label>
+                        <label id="thumbnail" style={{ backgroundImage: `url(${preview})` }} className={thumbnail ? 'has-thumbnail' : ''}>
+                            <Input type="file" onChange={(evt) => setThumbnail(evt.target.files[0])} />
+                            <img src={CameraIcon} style={{ maxWidth: "50px " }} alt="upload icon image" />
+                        </label>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Title: </Label>
+                        <Input id="title" type="text" value={title} placeholder={'Event title'}
+                            onChange={(evt) => setTitle(evt.target.value)} />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Event Description: </Label>
+                        <Input id="description" type="text" value={description} placeholder={'Event description'}
+                            onChange={(evt) => setDescription(evt.target.value)} />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Event price: </Label>
+                        <Input id="price" type="text" value={price} placeholder={'Event price R$00.00'}
+                            onChange={(evt) => setPrice(evt.target.value)} />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label>Event date: </Label>
+                        <Input id="date" type="date" value={date}
+                            onChange={(evt) => setDate(evt.target.value)} />
+                    </FormGroup>
+                    <FormGroup>
+                        <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
+                            <Button id="caret" value={sport} disabled>{sport}</Button>
+                            <DropdownToggle caret />
+                            <DropdownMenu>
+                                <DropdownItem onClick={() => sportEventHandler('running')}>running</DropdownItem>
+                                <DropdownItem onClick={() => sportEventHandler('cycling')}>cycling</DropdownItem>
+                                <DropdownItem onClick={() => sportEventHandler('swimming')}>swimming</DropdownItem>
+                            </DropdownMenu>
+                        </ButtonDropdown>
+                    </FormGroup>
                 </div>
                 <FormGroup>
                     <Button className="submit-btn" >
@@ -108,7 +120,7 @@ export default function EventsPage({ history }) {
                     </Button>
                 </FormGroup>
                 <FormGroup>
-                    <Button className="secondary-btn" onClick={() => history.push("/login")}>
+                    <Button className="secondary-btn" onClick={() => history.push("/")}>
                         Dashboard
                     </Button>
                 </FormGroup>

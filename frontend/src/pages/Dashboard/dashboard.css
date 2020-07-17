@@ -19,3 +19,15 @@ ul.events-list li header {
     background-repeat: no-repeat;
     border-radius: 4px;
 }
+
+ul.events-list li strong {
+    margin-top: 12px;
+    font-size: 24px;
+    color: #444;
+}
+
+@media (max-width: 768px){
+    ul.events-list {
+        grid-template-columns: 1fr;
+    }
+}

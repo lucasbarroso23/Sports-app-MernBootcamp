@@ -76,7 +76,7 @@ export default function Register({ history }) {
                     <Button className="secondary-btn" onClick={() => history.push("/login")}>Login instead?</Button>
                     </FormGroup>
                 </Form>
-                {errorMessage ? (
+                {error ? (
                 <Alert className="event-validation" color="danger">{errorMessage}</Alert>
             ) : ""}
         </Container>
