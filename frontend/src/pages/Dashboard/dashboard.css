@@ -29,6 +29,15 @@ ul.events-list li strong {
 .filter-panel {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+ul.events-list header div {
+    display: flex;
+    flex-direction: row-reverse;
+    
+
+
 }
 
 @media (max-width: 768px){
