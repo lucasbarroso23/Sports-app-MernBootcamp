@@ -17,6 +17,7 @@ module.exports = {
     },
 
     async getAllEvents(req, res) {
+        console.log('token', req.token);
         const { sport } = req.params;
         const query = sport ? { sport } : {}
         try {

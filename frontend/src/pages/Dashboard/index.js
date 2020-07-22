@@ -7,7 +7,8 @@ import './dashboard.css';
 //Dashboard will show all the events
 export default function Dashboard({ history }) {
     const [events, setEvents] = useState([]);
-    const user_id = localStorage.getItem('user');
+    const user = localStorage.getItem('user');
+    const user_id = localStorage.getItem('user_id');
     const [rSelected, setRSelected] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -23,13 +24,13 @@ export default function Dashboard({ history }) {
 
     const myEventsHandler = async () => {
         setRSelected('myevents')
-        const response = await api.get('/user/events', { headers: { user_id } });
+        const response = await api.get('/user/events', { headers: { user_id: user_id } });
         setEvents(response.data)
     }
 
     const getEvents = async (filter) => {
         const url = filter ? `/dashboard/${filter}` : '/dashboard'
-        const response = await api.get(url, { headers: { user_id } });
+        const response = await api.get(url, { headers: { user: user } });
 
         setEvents(response.data)
     };
@@ -60,7 +61,7 @@ export default function Dashboard({ history }) {
                     <Button color="primary" onClick={myEventsHandler} active={rSelected === "myevents"}>My events</Button>
                     <Button color="primary" onClick={() => filterHandler("running")} active={rSelected === "running"}>Running</Button>
                     <Button color="primary" onClick={() => filterHandler("cycling")} active={rSelected === "cycling"}>Cycling</Button>
-                    <Button color="primary" onClick={() => filterHandler("Delete")} active={rSelected === "swimming"}>swimming</Button>
+                    <Button color="primary" onClick={() => filterHandler("swimming")} active={rSelected === "swimming"}>swimming</Button>
                 </ButtonGroup>
                 <Button color="success" onClick={() => history.push('/events')}>Create event</Button>
             </div>

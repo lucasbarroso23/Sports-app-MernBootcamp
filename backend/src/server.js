@@ -11,11 +11,8 @@ if(process.env.NODE_ENV != 'production'){
     require('dotenv').config()
 }
 
-
 app.use(cors());
 app.use(express.json());
-
-
 
 try {
     mongoose.connect(process.env.MONGO_DB_CONNECTION, {
