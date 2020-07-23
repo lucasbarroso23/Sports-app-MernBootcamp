@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import api from "../../services/api";
 import moment from 'moment';
 import { Button, ButtonGroup, Alert } from 'reactstrap'
@@ -10,20 +10,26 @@ export default function Dashboard({ history }) {
     const [events, setEvents] = useState([]);
     const user = localStorage.getItem('user');
     const user_id = localStorage.getItem('user_id');
+
     const [rSelected, setRSelected] = useState(null);
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [messageHandler, setMessageHandler] = useState('');
+    const [eventsRequest, setEventsRequest] = useState([]);
 
     useEffect(() => {
         getEvents()
     }, [])
 
-    useEffect(() => {
-        const socket = socketio('http://localhost:8000/', { query: { user: user_id } });
+    const socket = useMemo(
+        () =>
+            socketio('http://localhost:8000/', { query: { user: user_id } }),
+            [user_id]
+    );
 
-        socket.on('registration_request', data => console.log(data))
-    }, [])
+    useEffect(() => {
+        socket.on('registration_request', data => setEventsRequest([...eventsRequest, data]));
+    }, [eventsRequest, socket])
 
     const filterHandler = async (query) => {
         setRSelected(query);
@@ -81,7 +87,7 @@ export default function Dashboard({ history }) {
     const regitrationRequestHandler = async (event) => {
         try {
             await api.post(`/registration/${event.id}`, {}, { headers: { user } })
-            
+
             setSuccess(true)
             setMessageHandler(`The request to the event ${event.title} was succesfully`)
             setTimeout(() => {
@@ -89,7 +95,7 @@ export default function Dashboard({ history }) {
                 filterHandler(null)
                 setMessageHandler('')
             }, 3000)
-            
+
         } catch (error) {
             setError(true)
             setMessageHandler(`The request to the event ${event.title} wasn't succesfully`)
@@ -103,6 +109,24 @@ export default function Dashboard({ history }) {
     console.log(events)
     return (
         <>
+            <ul className="notifications">
+                {eventsRequest.map(request => {
+                    console.log(request)
+                    return (
+                        <li key={request._id}>
+                            <div>
+                                <strong>{request.user.email}</strong> is requesting to register to your event
+                            <strong>{request.event.title}</strong>
+                            </div>
+                                <ButtonGroup>
+                                    <Button color="success" onClick={() => { }}>Accept</Button>
+                                    <Button color="danger" onClick={() => { }}>Denied</Button>
+                                </ButtonGroup>
+                        </li>
+                    )
+                })}
+
+            </ul>
             <div className="filter-panel">
                 <ButtonGroup>
                     <Button color="primary" onClick={() => filterHandler(null)} active={rSelected === null}>All sports</Button>
