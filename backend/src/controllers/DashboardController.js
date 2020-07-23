@@ -29,7 +29,7 @@ module.exports = {
             if (err) {
                 res.sendStatus(401);
             } else {
-                console.log('token', req.token);
+                //console.log('token', req.token);
                 const { sport } = req.params;
                 const query = sport ? { sport } : {}
                 try {
