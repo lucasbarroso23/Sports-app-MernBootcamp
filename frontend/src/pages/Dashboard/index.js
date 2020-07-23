@@ -27,7 +27,7 @@ export default function Dashboard({ history }) {
             setRSelected('myevents')
             const response = await api.get('/user/events', { headers: { user: user } });
             setEvents(response.data.events)
-            
+
         } catch (error) {
             history.push('/login');
         }
@@ -37,7 +37,7 @@ export default function Dashboard({ history }) {
         try {
             const url = filter ? `/dashboard/${filter}` : '/dashboard'
             const response = await api.get(url, { headers: { user: user } });
-            setEvents(response.data.events)            
+            setEvents(response.data.events)
         } catch (error) {
             history.push('/login');
         }
@@ -49,15 +49,21 @@ export default function Dashboard({ history }) {
             setSuccess(true)
             setTimeout(() => {
                 setSuccess(false)
-                filterHandler(null)                
+                filterHandler(null)
             }, 3000)
-        }           
+        }
         catch (error) {
             setError(true)
             setTimeout(() => {
                 setError(false)
             }, 2000)
         }
+    }
+
+    const logoutHandler = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('user_id')
+        history.push('/login');
     }
 
     console.log(events)
@@ -71,7 +77,10 @@ export default function Dashboard({ history }) {
                     <Button color="primary" onClick={() => filterHandler("cycling")} active={rSelected === "cycling"}>Cycling</Button>
                     <Button color="primary" onClick={() => filterHandler("swimming")} active={rSelected === "swimming"}>swimming</Button>
                 </ButtonGroup>
-                <Button color="success" onClick={() => history.push('/events')}>Create event</Button>
+                <ButtonGroup>
+                    <Button color="success" onClick={() => history.push('/events')}>Create event</Button>
+                    <Button color="danger" onClick={logoutHandler}>Logout</Button>
+                </ButtonGroup>
             </div>
             <ul className="events-list">
                 {events.map(event => (
@@ -87,12 +96,12 @@ export default function Dashboard({ history }) {
                     </li>
                 ))}
             </ul>
-                {error ? (
-                    <Alert className="event-validation" color="danger">Error when deleting event</Alert>
-                ) : ""}
-                {success ? (
-                    <Alert className="event-validation" color="success">The event was deleted sucessfuly</Alert>
-                ) : ""}
+            {error ? (
+                <Alert className="event-validation" color="danger">Error when deleting event</Alert>
+            ) : ""}
+            {success ? (
+                <Alert className="event-validation" color="success">The event was deleted sucessfuly</Alert>
+            ) : ""}
         </>
     )
 }
