@@ -20,7 +20,7 @@ export default function Dashboard({ history }) {
     }, [])
 
     useEffect(() => {
-        const socket = socketio('http://localhost:8000/', { query: { user_id } });
+        const socket = socketio('http://localhost:8000/', { query: { user: user_id } });
 
         socket.on('registration_request', data => console.log(data))
     }, [])
@@ -81,6 +81,7 @@ export default function Dashboard({ history }) {
     const regitrationRequestHandler = async (event) => {
         try {
             await api.post(`/registration/${event.id}`, {}, { headers: { user } })
+            
             setSuccess(true)
             setMessageHandler(`The request to the event ${event.title} was succesfully`)
             setTimeout(() => {

@@ -1,35 +1,34 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 module.exports = {
     async createUser(req, res) {
         try {
-            const {firstName, lastName, password, email} =  req.body;
+            const { firstName, lastName, password, email } = req.body;
+            const existentUser = await User.findOne({ email });
 
-            const existentUser = await User.findOne({email});
-
-            if(!existentUser) {
+            if (!existentUser) {
                 const hashedPassword = await bcrypt.hash(password, 10);
-                const user = await User.create({
+                const userResponse = await User.create({
                     firstName,
                     lastName,
                     email,
                     password: hashedPassword
-                });
-
-                return res.json({
-                    _id: user._id,
-                    email: user.email,
-                    firstName: user.firstName,
-                    lastName: user.lastName
                 })
+
+                return jwt.sign({ user: userResponse }, 'secret', (err, token) => {
+                    return res.json({
+                        user: token,
+                        user_id: userResponse._id
+                    })
+                })
+            } else {
+                return res.status(400).json({
+                    message: 'email already exist! Do you want to login instead?'
+                });
             }
-
-            return res.status(400).json({
-                message:'email already exist! Do you want to login instead?'
-            });
-
         } catch (error) {
             throw Error(`Error while registering a new user : ${error}`)
         }
@@ -44,7 +43,7 @@ module.exports = {
             return res.json(user);
         } catch (error) {
             return res.status(400).json({
-                message:'User ID does not exist! Do you want to register instead?'
+                message: 'User ID does not exist! Do you want to register instead?'
             });
         }
     }

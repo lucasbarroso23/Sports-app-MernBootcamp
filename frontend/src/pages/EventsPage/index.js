@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import api from '../../services/api';
-import { Button, Form, FormGroup, Input, Container, Label, Alert, ButtonDropdown, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
+import { Button, Form, FormGroup, Input, Container, Label, Alert, ButtonDropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap';
 import CameraIcon from '../../assets/camera.png'
 import "./events.css";
 
