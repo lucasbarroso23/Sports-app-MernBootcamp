@@ -10,13 +10,13 @@ module.exports = {
             } else {
                 const { registration_id } = req.params;        
                 try {        
-                    const registration = await Registration.findById(registration_id);
-                    console.log(authData.user)
-                    console.log(registration)
+                    const registration = await Registration.findById(registration_id);                    
+                    
 
                     if(registration){
                         registration.approved = true;                
-                        await registration.save();                
+                        await registration.save();   
+                        console.log(registration)             
                         return res.json(registration);
                     }                                
                 } catch (error) {

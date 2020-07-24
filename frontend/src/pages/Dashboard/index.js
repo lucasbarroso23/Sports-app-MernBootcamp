@@ -111,13 +111,34 @@ export default function Dashboard({ history }) {
             await api.post(`/registration/${eventId}/approvals`, {}, { headers: { user } })
             setEventRequestSuccess(true)
             setEventRequestMessage('Event approved successfully!');
+            removeNotificationFromDashboard(eventId)
             setTimeout(() => {
                 setError(false)
                 setMessageHandler('')
-            }, 2000)
+            }, 2500)
         } catch (err) {
             console.log(err)
         }
+    }
+
+    const rejectEventHandler = async (eventId) => {
+        try {
+            await api.post(`/registration/${eventId}/rejections`, {}, { headers: { user } })
+            setEventRequestSuccess(true)
+            setEventRequestMessage('Event rejected successfully!');
+            removeNotificationFromDashboard(eventId)
+            setTimeout(() => {
+                setError(false)
+                setMessageHandler('')
+            }, 2500)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const removeNotificationFromDashboard = (eventId) => {
+        const newEvents = eventsRequest.filter((event) => event._id !== eventId)
+        setEventsRequest(newEvents)
     }
 
     console.log(events)
@@ -125,7 +146,6 @@ export default function Dashboard({ history }) {
         <>
             <ul className="notifications">
                 {eventsRequest.map(request => {
-                    console.log(request)
                     return (
                         <li key={request._id}>
                             <div>
@@ -134,7 +154,7 @@ export default function Dashboard({ history }) {
                             </div>
                             <ButtonGroup>
                                 <Button color="success" onClick={() => acceptEventHandler(request._id)}>Accept</Button>
-                                <Button color="danger" onClick={() => { }}>Reject</Button>
+                                <Button color="danger" onClick={() => rejectEventHandler(request._id)}>Reject</Button>
                             </ButtonGroup>
                         </li>
                     )
