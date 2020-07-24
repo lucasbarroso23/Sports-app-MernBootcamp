@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import api from "../../services/api";
 import moment from 'moment';
-import { Button, ButtonGroup, Alert } from 'reactstrap'
+import { Button, ButtonGroup, Alert, Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from 'reactstrap'
 import socketio from 'socket.io-client';
 import './dashboard.css';
 
 //Dashboard will show all the events
 export default function Dashboard({ history }) {
+
     const [events, setEvents] = useState([]);
     const user = localStorage.getItem('user');
     const user_id = localStorage.getItem('user_id');
@@ -16,6 +17,9 @@ export default function Dashboard({ history }) {
     const [success, setSuccess] = useState(false);
     const [messageHandler, setMessageHandler] = useState('');
     const [eventsRequest, setEventsRequest] = useState([]);
+    const [dropDownOpen, setDropDownOpen] = useState(false);
+
+    const toggle = () => setDropDownOpen(!dropDownOpen)
 
     useEffect(() => {
         getEvents()
@@ -24,7 +28,7 @@ export default function Dashboard({ history }) {
     const socket = useMemo(
         () =>
             socketio('http://localhost:8000/', { query: { user: user_id } }),
-            [user_id]
+        [user_id]
     );
 
     useEffect(() => {
@@ -78,12 +82,6 @@ export default function Dashboard({ history }) {
         }
     }
 
-    const logoutHandler = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('user_id')
-        history.push('/login');
-    }
-
     const regitrationRequestHandler = async (event) => {
         try {
             await api.post(`/registration/${event.id}`, {}, { headers: { user } })
@@ -118,27 +116,28 @@ export default function Dashboard({ history }) {
                                 <strong>{request.user.email}</strong> is requesting to register to your event
                             <strong>{request.event.title}</strong>
                             </div>
-                                <ButtonGroup>
-                                    <Button color="success" onClick={() => { }}>Accept</Button>
-                                    <Button color="danger" onClick={() => { }}>Denied</Button>
-                                </ButtonGroup>
+                            <ButtonGroup>
+                                <Button color="success" onClick={() => { }}>Accept</Button>
+                                <Button color="danger" onClick={() => { }}>Denied</Button>
+                            </ButtonGroup>
                         </li>
                     )
                 })}
 
             </ul>
             <div className="filter-panel">
-                <ButtonGroup>
-                    <Button color="primary" onClick={() => filterHandler(null)} active={rSelected === null}>All sports</Button>
-                    <Button color="primary" onClick={myEventsHandler} active={rSelected === "myevents"}>My events</Button>
-                    <Button color="primary" onClick={() => filterHandler("running")} active={rSelected === "running"}>Running</Button>
-                    <Button color="primary" onClick={() => filterHandler("cycling")} active={rSelected === "cycling"}>Cycling</Button>
-                    <Button color="primary" onClick={() => filterHandler("swimming")} active={rSelected === "swimming"}>swimming</Button>
-                </ButtonGroup>
-                <ButtonGroup>
-                    <Button color="success" onClick={() => history.push('/events')}>Create event</Button>
-                    <Button color="danger" onClick={logoutHandler}>Logout</Button>
-                </ButtonGroup>
+                <Dropdown isOpen={dropDownOpen} toggle={toggle}>
+                    <DropdownToggle color="primary" caret>
+                        filter
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem onClick={() => filterHandler(null)} active={rSelected === null}>All Sports</DropdownItem>
+                        <DropdownItem onClick={myEventsHandler} active={rSelected === "myevents"}>My events</DropdownItem>
+                        <DropdownItem onClick={() => filterHandler("running")} active={rSelected === "running"}>Running</DropdownItem>
+                        <DropdownItem onClick={() => filterHandler("cycling")} active={rSelected === "cycling"}>Cycling</DropdownItem>
+                        <DropdownItem onClick={() => filterHandler("swimming")} active={rSelected === "swimming"}>Swimming</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
             </div>
             <ul className="events-list">
                 {events.map(event => (
