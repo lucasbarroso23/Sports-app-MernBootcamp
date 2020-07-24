@@ -18,6 +18,8 @@ export default function Dashboard({ history }) {
     const [messageHandler, setMessageHandler] = useState('');
     const [eventsRequest, setEventsRequest] = useState([]);
     const [dropDownOpen, setDropDownOpen] = useState(false);
+    const [eventRequestMessage, setEventRequestMessage] = useState('');
+    const [eventRequestSuccess, setEventRequestSuccess] = useState(false);
 
     const toggle = () => setDropDownOpen(!dropDownOpen)
 
@@ -104,6 +106,20 @@ export default function Dashboard({ history }) {
         }
     }
 
+    const acceptEventHandler = async (eventId) => {
+        try {
+            await api.post(`/registration/${eventId}/approvals`, {}, { headers: { user } })
+            setEventRequestSuccess(true)
+            setEventRequestMessage('Event approved successfully!');
+            setTimeout(() => {
+                setError(false)
+                setMessageHandler('')
+            }, 2000)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     console.log(events)
     return (
         <>
@@ -117,14 +133,14 @@ export default function Dashboard({ history }) {
                             <strong>{request.event.title}</strong>
                             </div>
                             <ButtonGroup>
-                                <Button color="success" onClick={() => { }}>Accept</Button>
-                                <Button color="danger" onClick={() => { }}>Denied</Button>
+                                <Button color="success" onClick={() => acceptEventHandler(request._id)}>Accept</Button>
+                                <Button color="danger" onClick={() => { }}>Reject</Button>
                             </ButtonGroup>
                         </li>
                     )
                 })}
-
             </ul>
+            {eventRequestSuccess ? <Alert className="event-validation" color="success">{eventRequestMessage}</Alert> : ""}
             <div className="filter-panel">
                 <Dropdown isOpen={dropDownOpen} toggle={toggle}>
                     <DropdownToggle color="primary" caret>
