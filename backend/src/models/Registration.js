@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
-
 const RegistrationSchema = new mongoose.Schema({
-
     date: () => Date.now(),
     approved: Boolean,
+    owner: String,
+    eventTitle: String,
+    eventPrice: String,
+    eventDate: String,
+    userEmail: String, 
     user:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
@@ -13,7 +16,6 @@ const RegistrationSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref: "Event"
     }
-
 });
 
 module.exports = mongoose.model('Registration', RegistrationSchema)

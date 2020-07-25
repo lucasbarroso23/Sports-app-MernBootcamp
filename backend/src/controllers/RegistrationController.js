@@ -22,7 +22,13 @@ module.exports = {
                     .populate('user', '-password')
                     .execPopulate();
 
-                console.log(registration.event.user)
+                registration.owner = registration.event.user
+                registration.eventTitle = registration.event.title 
+                registration.eventPrice = registration.event.price
+                registration.eventDate = registration.event.date
+                registration.userEmail = registration.user.email
+                registration.save()
+                console.log(registration)                
 
                 const ownerSocket = req.connectUsers[registration.event.user];
 
@@ -36,19 +42,38 @@ module.exports = {
     },
 
     async getRegistration(req, res) {
-		const { registration_id } = req.params
-		try {
-			const registration = await Registration.findById(registration_id)
-			await registration
-				.populate('event')
-				.populate('user', '-password')
-				.execPopulate()
+        const { registration_id } = req.params
+        try {
+            const registration = await Registration.findById(registration_id)
+            await registration
+                .populate('event')
+                .populate('user', '-password')
+                .execPopulate()
 
-			return res.json(registration)
-		} catch (error) {
-			return res.status(400).json({ message: 'Registration not found' })
-		}
 
-	}
+
+            return res.json(registration)
+        } catch (error) {
+            return res.status(400).json({ message: 'Registration not found' })
+        }
+
+    },
+
+    getMyRegistrations(req, res) {
+        jwt.verify(req.token, 'secret', async (err, authData) => {
+            if (err) {
+                res.sendStatus(401);
+            } else {
+                try {
+                    const registrationsArr = await Registration.find({ "owner": authData.user._id })
+                    if (registrationsArr) {
+                        return res.json(registrationsArr)
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })
+    }
 
 }
